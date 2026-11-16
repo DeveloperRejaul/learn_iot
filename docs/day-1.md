@@ -12,7 +12,7 @@ ESP32 বোর্ড USB দিয়ে কানেক্ট করে MicroP
 - `esptool chip-id` দিয়ে চিপ শনাক্ত হয়েছে
 - `pipenv` দিয়ে প্যাকেজ ম্যানেজমেন্ট শুরু: `esptool` 5.6.0, `mpremote` 1.29.0, dev হিসেবে `micropython-esp32-stubs` 1.29.0.post1
 - `Pipfile` ও `Pipfile.lock` এ সব ভার্সন লক করা হয়েছে (Python 3.15)
-- LED blink কোড লেখা হয়েছে: `src/main.py`
+- LED blink কোড লেখা হয়েছে: `src/day_01/main.py`
 - `README.md` ও এই ডক লেখা হয়েছে
 
 ## বোর্ডের তথ্য
@@ -37,7 +37,7 @@ ESP32 বোর্ড USB দিয়ে কানেক্ট করে MicroP
 
 ## কোড
 
-`src/main.py`:
+`src/day_01/main.py`:
 
 ```python
 from machine import Pin  # type: ignore
@@ -60,7 +60,7 @@ while True:
 ## বাকি কাজ
 
 - [ ] MicroPython ফার্মওয়্যার ফ্ল্যাশ (`erase-flash`, তারপর `write-flash 0x1000`)
-- [ ] `mpremote run src/main.py` দিয়ে LED জ্বলতে দেখা
+- [ ] `mpremote run src/day_01/main.py` দিয়ে LED জ্বলতে দেখা
 - [ ] `main.py` বোর্ডে সেভ করে পাওয়ার দিলে নিজে চলে কি না দেখা
 - [ ] VS Code এ `.venv` interpreter বেছে Pylance ওয়ার্নিং দূর হয়েছে কি না দেখা
 

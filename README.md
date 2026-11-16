@@ -11,7 +11,9 @@ learn_iot/
 ├── docs/
 │   └── day-1.md        # Day 1 নোট
 ├── src/
-│   └── main.py         # বোর্ডে চালানোর কোড (LED blink)
+│   ├── day_01/
+│   │   └── main.py     # Day 1: LED blink
+│   └── day_02/         # (পরে) প্রতিদিনের জন্য নতুন ফোল্ডার
 ├── Pipfile             # প্রজেক্টের প্যাকেজ তালিকা
 ├── Pipfile.lock        # সব প্যাকেজের সঠিক ভার্সন (commit করুন)
 ├── .venv/              # pipenv এর virtual environment (commit করবেন না)
@@ -153,16 +155,18 @@ mpremote connect /dev/cu.usbserial-59450705951 exec "import gc, machine; print('
 
 ## প্রোগ্রাম চালানো
 
+কোড দিনভিত্তিক ফোল্ডারে থাকে: `src/day_01/`, `src/day_02/`, ... প্রতিদিনের প্রোগ্রাম নিজের ফোল্ডারের `main.py` তে লেখা হয়। অন্য দিনের প্রোগ্রাম চালাতে নিচের কমান্ডে `day_01` এর জায়গায় সেই দিনের ফোল্ডারের নাম দিন।
+
 **একবার চালিয়ে দেখা** (বোর্ডে সেভ হয় না, থামাতে `Ctrl + C`):
 
 ```bash
-mpremote connect /dev/cu.usbserial-59450705951 run src/main.py
+mpremote connect /dev/cu.usbserial-59450705951 run src/day_01/main.py
 ```
 
 **বোর্ডে স্থায়ীভাবে সেভ করা** (পাওয়ার দিলেই নিজে চলবে):
 
 ```bash
-mpremote connect /dev/cu.usbserial-59450705951 cp src/main.py :main.py
+mpremote connect /dev/cu.usbserial-59450705951 cp src/day_01/main.py :main.py
 mpremote connect /dev/cu.usbserial-59450705951 reset
 ```
 
