@@ -2,7 +2,7 @@
 
 IoT ও রোবটিক্স হাতে-কলমে শেখার প্রজেক্ট। বিভিন্ন কম্পোনেন্ট (LED, বাটন, সেন্সর, মোটর, সার্ভো, ডিসপ্লে ইত্যাদি) নিয়ে প্র্যাকটিস করা হয়, প্রতিদিনের কাজ আলাদা ফোল্ডারে রাখা হয়।
 
-বর্তমানে ব্যবহৃত বোর্ড: **ESP32** (MicroPython)। ভবিষ্যতে অন্য বোর্ড যোগ করা যাবে।
+বর্তমানে ব্যবহৃত বোর্ড: **ESP32** (MicroPython)। ভবিষ্যতে অন্য বোর্ড যোগ করা যাবে। আসল বোর্ড ছাড়াও **Wokwi সিমুলেটরে** (ওয়েব বা VS Code এ) কোড পরীক্ষা করা যায়: [সিমুলেটরে টেস্ট](#সিমুলেটরে-টেস্ট-vs-code-এ-wokwi)।
 
 - দৈনিক নোট: [docs/day-1.md](docs/day-1.md)
 - কম্পোনেন্ট প্র্যাকটিস তালিকা: [docs/components.md](docs/components.md)
@@ -21,6 +21,8 @@ learn_iot/
 │   │   └── main.py     # Day 1: LED blink
 │   ├── day_02/         # (পরে) প্রতিদিনের জন্য নতুন ফোল্ডার
 │   └── projects/       # (পরে) বড় প্রজেক্ট, যেমন water_tank/
+├── simulator/
+│   └── esp32/          # Wokwi সিমুলেটরের ফাইল (wokwi.toml, diagram.json)
 ├── Pipfile             # প্রজেক্টের প্যাকেজ তালিকা
 ├── Pipfile.lock        # সব প্যাকেজের সঠিক ভার্সন (commit করুন)
 ├── .venv/              # pipenv এর virtual environment (commit করবেন না)
@@ -191,6 +193,61 @@ mpremote connect /dev/cu.usbserial-59450705951 reset
 ```bash
 mpremote connect /dev/cu.usbserial-59450705951 exec "from machine import Pin; Pin(2, Pin.OUT).value(0)"
 ```
+
+## সিমুলেটরে টেস্ট (VS Code এ Wokwi)
+
+### ওয়েবে দ্রুত চেষ্টা
+
+https://wokwi.com এ নতুন প্রজেক্টে **ESP32 → MicroPython** টেমপ্লেট বেছে `src/day_01/main.py` এর কোড `main.py` তে বসিয়ে ▶ চাপুন। LED লাগাতে হবে **ডান পাশের `2` লেখা পিনে** (GPIO 2), রেজিস্টর (220Ω) দিয়ে, আর অন্য পা `GND` তে। বাঁ পাশের `D2` আসলে GPIO 9, ওটা ব্যবহার করবেন না।
+
+### VS Code এ চালানো
+
+আসল বোর্ড ছাড়াই VS Code এর ভেতরে ESP32 চালানো যায়। সিমুলেটরের ফাইল `simulator/esp32/` এ আছে (`wokwi.toml`, `diagram.json`, MicroPython ফার্মওয়্যার)। `diagram.json` এ ESP32, LED ও 220Ω রেজিস্টর GPIO 2 তে জোড়া আছে।
+
+### একবারের সেটআপ
+
+1. VS Code এ **Wokwi for VS Code** এক্সটেনশন ইনস্টল করুন।
+2. `F1` চেপে **Wokwi: Request a new License** চালান। ব্রাউজারে ফ্রি লাইসেন্স নিয়ে VS Code এ নিশ্চিত করুন।
+3. ফার্মওয়্যার না থাকলে (এটা git এ নেই) ডাউনলোড করুন:
+   ```bash
+   curl -L -o simulator/esp32/ESP32_GENERIC-20260824-v1.29.0.bin \
+     https://github.com/wokwi/wokwi-vscode-micropython/raw/main/esp32/ESP32_GENERIC-20260824-v1.29.0.bin
+   ```
+4. ফার্মওয়্যারের ভার্সন (1.29.0) ও `mpremote` এর ভার্সন (1.29.0) মেলানো আছে। `pipenv install --dev` করলেই হবে।
+
+### প্রতিবার চালানোর নিয়ম (পরীক্ষিত, কাজ করছে)
+
+1. VS Code এ `simulator/esp32/diagram.json` খুলুন।
+2. ▶ **Start Simulation** চাপুন (অথবা `F1` → **Wokwi: Start Simulator**)। কয়েক সেকেন্ড অপেক্ষা করুন, কনসোলে `>>>` আসা পর্যন্ত।
+3. **নতুন টার্মিনাল** খুলে প্রজেক্ট ফোল্ডারে কোড চালান:
+   ```bash
+   mpremote connect port:rfc2217://localhost:4000 run src/day_01/main.py
+   ```
+   (`(.venv)` সক্রিয় না থাকলে শুরুতে `pipenv run` বসান।)
+4. LED জ্বলবে-নিভবে। থামাতে টার্মিনালে `Ctrl + C`।
+
+`run` কমান্ড কোড সেভ না করে সরাসরি চালায়, তাই রিসেট নিয়ে ঝামেলা নেই। কোড বদলালে `Ctrl + C` চেপে ৩ নম্বর কমান্ড আবার চালান। অন্য দিনের কোড চালাতে `day_01` এর জায়গায় সেই ফোল্ডারের নাম দিন।
+
+### বিকল্প: কোড বোর্ডে সেভ করে চালানো
+
+```bash
+mpremote connect port:rfc2217://localhost:4000 fs cp src/day_01/main.py :main.py
+```
+
+তারপর **Stop বা Start না চেপে** সিমুলেটর কনসোলে ক্লিক করে শুধু **Ctrl + D** চাপুন।
+
+> ⚠️ আপলোডের পর সিমুলেশন Stop বা Start করলে সিমুলেটরের ফ্ল্যাশ নতুন হয়ে যায় (`Performing initial setup` দেখা যায়) এবং সেভ করা `main.py` মুছে যায়। এজন্য সাধারণত `run` কমান্ডই ভালো।
+
+### সমস্যা হলে
+
+| সমস্যা | সমাধান |
+|---|---|
+| `could not enter raw repl` | সিমুলেটর বুট শেষ হওয়ার জন্য ১০ সেকেন্ড অপেক্ষা করে আবার চালান |
+| পোর্ট 4000 ব্যস্ত বা `failed to connect` | সিমুলেটর চালু আছে কি না দেখুন, অন্য প্রোগ্রাম পোর্ট ধরে থাকলে বন্ধ করুন |
+| `OSError: [Errno 2] ENOENT` (`fs cp` এর সময়) | স্বাভাবিক, `mpremote` ফাইল আছে কি না দেখছে। এরর নয় |
+| `Courtesy Notice` (pipenv) | সতর্কবার্তা মাত্র। `(.venv)` সক্রিয় থাকলে `pipenv run` ছাড়াই `mpremote` চালান |
+| আপলোডের পর কনসোলে শুধু `>>>`, কিছু চলে না | সিমুলেশন রিস্টার্ট হয়ে ফাইল মুছে গেছে। `run` কমান্ড ব্যবহার করুন |
+| কোড চলছে কিন্তু LED জ্বলে না | তার যাচাই করুন: GPIO 2 → রেজিস্টর → LED anode, LED cathode → `GND` |
 
 ## সমস্যা সমাধান
 

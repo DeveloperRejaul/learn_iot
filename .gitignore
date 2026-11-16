@@ -1,3 +1,6 @@
 .venv/
 __pycache__/
 .DS_Store
+
+# Wokwi MicroPython firmware (বড় ফাইল, README তে ডাউনলোডের কমান্ড আছে)
+simulator/**/*.bin
